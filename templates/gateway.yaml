@@ -1,0 +1,22 @@
+{{- if not .Values.tlsSecretName }}
+{{- fail "You must provide .Values.tlsSecretName in values.yaml" }}
+{{- end }}
+
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+    name: {{ .Values.name }}-ingressgateway
+    namespace: {{ .Values.namespace | default "istio-system" }}
+spec:
+  selector:
+    asm: {{ .Values.name }}-ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - "*" # IMPORTANT: Must use wildcard here when using SSL, see note below
+    tls:
+      mode: SIMPLE
+      credentialName: {{ .Values.tlsSecretName }}

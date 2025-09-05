@@ -1,0 +1,15 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Values.name }}-ingressgateway
+  namespace: {{ .Values.namespace | default "istio-system" }}
+spec:
+  healthCheck:
+    requestPath: /healthz/ready
+    port: 15021
+    type: HTTP
+  {{- if .Values.securityPolicy }}
+  securityPolicy:
+    name: "{{ .Values.securityPolicy }}"
+  {{- end }}
+  timeoutSec: {{ .Values.timeoutSec | default 3600 }}

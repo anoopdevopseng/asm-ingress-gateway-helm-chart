@@ -1,0 +1,22 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.name }}-ingressgateway
+  namespace: {{ .Values.namespace | default "istio-system" }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.name }}-ingressgateway
+  namespace: {{ .Values.namespace | default "istio-system" }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ .Values.name }}-ingressgateway
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.name }}-ingressgateway

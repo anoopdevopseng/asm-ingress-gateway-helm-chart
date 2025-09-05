@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}-ingressgateway
+  namespace: {{ .Values.namespace | default "istio-system" }}
+spec:
+  selector:
+    matchLabels:
+      asm: {{ .Values.label | default (printf "%s-ingressgateway" .Values.name) }}
+  template:
+    metadata:
+      annotations:
+        inject.istio.io/templates: gateway
+      labels:
+        asm: {{ .Values.label | default (printf "%s-ingressgateway" .Values.name) }}
+    spec:
+      containers:
+      - name: istio-proxy
+        image: {{ .Values.image | default "auto" }}
+        {{- with .Values.resources }}
+        resources:
+          limits:
+            cpu: {{ .limits.cpu | default "2000m" }}
+            memory: {{ .limits.memory | default "1024Mi" }}
+          requests:
+            cpu: {{ .requests.cpu | default "100m" }}
+            memory: {{ .requests.memory | default "128Mi" }}
+        {{- else }}
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        {{- end }}
+      serviceAccountName: {{ .Values.serviceAccountName | default (printf "%s-ingressgateway" .Values.name) }}

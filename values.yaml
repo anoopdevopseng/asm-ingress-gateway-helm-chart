@@ -1,0 +1,48 @@
+################################################################
+# Global settings
+################################################################
+name: demo
+
+# namespace: istio-system
+
+################################################################
+# Values for Deployment
+################################################################
+
+# resources:
+#   limits:
+#     cpu: 1000m
+#     memory: 500Mi
+#   requests:
+#     cpu: 50m
+#     memory: 128Mi
+
+################################################################
+# Values for HPA
+################################################################
+
+# minReplicas: 1
+# maxReplicas: 3
+# cpuAverageUtilization: 60
+
+################################################################
+# Values for BackendConfig
+################################################################
+
+# securityPolicy: demo-policy
+# timeoutSec: 2000
+
+################################################################
+# Values for Ingress and Gateway
+################################################################
+
+tlsSecretName: demo-ssl   # Mandatory: Provide the name of the TLS secret is necessary for SSL termination
+# ingressStaticIP: demo-gateway
+
+################################################################
+# Ingress Hosts
+################################################################
+
+hosts:                        # Mandatory: Provide at least one host
+  - host: example.com
+#   - host: another.com

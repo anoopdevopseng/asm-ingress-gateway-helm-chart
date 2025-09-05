@@ -1,0 +1,39 @@
+{{- if not .Values.tlsSecretName }}
+{{- fail "You must provide .Values.tlsSecretName in values.yaml" }}
+{{- end }}
+
+{{- if not .Values.hosts }}
+{{- fail "You must provide at least one host in .Values.hosts" }}
+{{- end }}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-ingressgateway
+  namespace: {{ .Values.namespace | default "istio-system" }}
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+    kubernetes.io/ingress.class: "gce"
+    {{- if .Values.ingressStaticIP }}
+    kubernetes.io/ingress.global-static-ip-name: "{{ .Values.ingressStaticIP }}"
+    {{- end }}
+spec:
+  tls:
+  - secretName: {{ .Values.tlsSecretName }}
+    hosts:
+    {{- range .Values.hosts }}
+    - {{ .host }}
+    {{- end }}
+  rules:
+  {{- range .Values.hosts }}
+  - host: {{ .host }}
+    http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: {{ $.Values.name }}-ingressgateway
+            port:
+              number: 443
+  {{- end }}

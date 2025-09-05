@@ -1,0 +1,27 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}-ingressgateway
+  namespace: {{ .Values.namespace | default "istio-system" }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-ingressgateway"}'
+    cloud.google.com/app-protocols: '{"https":"HTTP2"}' # HTTP/2 with TLS encryption
+  labels:
+    asm: {{ .Values.name }}-ingressgateway
+spec:
+  ports:
+  # status-port exposes a /healthz/ready endpoint that can be used with GKE Ingress health checks
+  - name: status-port
+    port: 15021
+    protocol: TCP
+    targetPort: 15021
+  # Any ports exposed in Gateway resources should be exposed here.
+  - name: http2
+    port: 80
+  - name: https
+    port: 443
+  selector:
+    asm: {{ .Values.name }}-ingressgateway
+  type: ClusterIP
