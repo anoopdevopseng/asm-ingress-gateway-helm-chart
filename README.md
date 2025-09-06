@@ -47,7 +47,6 @@ Add these to your `values.yaml`:
 ```yaml
 name: demo
 namespace: istio-system
-image: auto
 hosts:
   - host: example.com
   - host: another.com
