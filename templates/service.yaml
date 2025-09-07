@@ -9,7 +9,7 @@ metadata:
     cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-ingressgateway"}'
     cloud.google.com/app-protocols: '{"https":"HTTP2"}' # HTTP/2 with TLS encryption
   labels:
-    asm: {{ .Values.name }}-ingressgateway
+    asm: {{ .Values.label | default (printf "%s-ingressgateway" .Values.name) }}
 spec:
   ports:
   # status-port exposes a /healthz/ready endpoint that can be used with GKE Ingress health checks
@@ -23,5 +23,5 @@ spec:
   - name: https
     port: 443
   selector:
-    asm: {{ .Values.name }}-ingressgateway
+    asm: {{ .Values.label | default (printf "%s-ingressgateway" .Values.name) }}
   type: ClusterIP

@@ -9,7 +9,7 @@ metadata:
     namespace: {{ .Values.namespace | default "istio-system" }}
 spec:
   selector:
-    asm: {{ .Values.name }}-ingressgateway
+    asm: {{ .Values.label | default (printf "%s-ingressgateway" .Values.name) }}
   servers:
   - port:
       number: 443
